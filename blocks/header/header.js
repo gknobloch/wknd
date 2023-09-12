@@ -11,12 +11,23 @@ function collapseAllNavSections(sections) {
   });
 }
 
+function addScript($element, src) {
+  const $sc = document.createElement('script');
+  $sc.setAttribute('src', src);
+  $element.appendChild($sc);
+}
+
 /**
  * decorates the header, mainly the nav
  * @param {Element} block The header block element
  */
 
 export default async function decorate(block) {
+
+  // Web Components scripts
+  addScript(block, '/blocks/web-components/wknd-small-card.js');
+  addScript(block, '/blocks/web-components/activities-selector.js');
+
   // fetch nav content
   const navPath = window.wknd.demoConfig.demoBase || '';
 

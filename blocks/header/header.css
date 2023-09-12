@@ -1,3 +1,18 @@
+/* Design tokens (simplistic for this example) */
+:root {
+  --fontFamilySansSerif: "Source Sans Pro","Helvetica Neue",Helvetica,Arial;
+  --fontSizeMedium: 42px;
+  --fontSizeSmall: 18px;
+
+  --textColor: black;
+  --titleColor: black;
+  --textColorDim: dimGray;
+
+  --small-card-width: 267px;
+  --smallCardImageHeight: 180px;
+  --smallCardTitleFontSize: 12px;
+}
+
 /* stylelint-disable */
 /* header and nav layout */
 header nav {

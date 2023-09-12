@@ -1,12 +1,23 @@
-# Your Project's Title...
-Your project's description...
+# AEM headless data + Web Components in a Franklin website
 
-## Environments
-- Preview: https://main--wknd--hlxsites.hlx.page/
-- Live: https://main--wknd--hlxsites.hlx.live/
+This is an experiment with a Franklin block that fetches AEM headless data and
+renders it using Web Components.
 
-## Installation
+The interesting page, which displays
+a list of cards representing WKND Adventures, is
+https://web-components--wknd--gknobloch.hlx.page/experiments/adventures-headless/aem-headless
+, built from
+[a Sharepoint document](https://adobe.sharepoint.com/:w:/r/sites/HelixProjects/_layouts/15/Doc.aspx?sourcedoc=%7BC7912D95-6A03-423A-A04E-B8A0E1EBA4F3%7D&file=aem-headless.docx&action=default&mobileredirect=true)
+mixed with (cached) live AEM data read at
+https://dev.wknd.site/graphql/execute.json/wknd-shared/adventures-all-franklin
 
+That page is rendered by the [adventures-list](./blocks/adventures-list/) Franklin block.
+
+## Local development
+
+Start Helix Pages Proxy: `hlx up` (opens your browser at `http://localhost:3000`)
+
+### 
 ```sh
 npm i
 ```
@@ -17,10 +28,4 @@ npm i
 npm tst
 ```
 
-## Local development
 
-1. Create a new repository based on the `helix-project-boilerplate` template and add a mountpoint in the `fstab.yaml`
-1. Add the [helix-bot](https://github.com/apps/helix-bot) to the repository
-1. Install the [Helix CLI](https://github.com/adobe/helix-cli): `npm install -g @adobe/helix-cli`
-1. Start Helix Pages Proxy: `hlx up` (opens your browser at `http://localhost:3000`)
-1. Open the `{repo}` directory in your favorite IDE and start coding :)

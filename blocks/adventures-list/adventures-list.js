@@ -11,63 +11,83 @@ async function fetchAdventures(url) {
   return {};
 }
 
+function getError(content, data) {
+  const $div = document.createElement('div');
+  $div.className = 'block-error';
+  const $data = data? JSON.stringify(data) : '';
+  $div.innerHTML = `${content}<pre>${$data}</pre>`;
+  return $div;
+}
+
 /**
  * @param {HTMLElement} $block The adventures list block element
  */
 export default async function decorate($block) {
+  var $err = null;
+
   // Get URL
   const link = $block.querySelector('a');
-  var path = link ? link.getAttribute('href') : $block.textContent.trim();
-  // Get content host
-  var hostname = link.hostname;
-
-  if (document.referrer.endsWith('https://exc-unifiedcontent.experience.adobe.net/')) {
-    // Assume page is loaded within Universal Editor
-    const aem = document.querySelector("meta[name='urn:adobe:aem:editor:aemconnection']");
-    if (aem && aem.content && aem.content.startsWith('aem:')) {
-      path = aem.content.substring(4) + link.pathname;
-      hostname = aem.content.substring(4).replace('https://', '');
-    }
+  if(!link) {
+    $err = getError("no 'a' element found in block", $block);
   }
+  const path = link ? link.getAttribute('href') : $block.textContent.trim();
+  const hostname = link ? link.hostname : null;
 
-  // Fetch adventures
+  // Fetch adventures and render as wknd-small-card elements
   const json = await fetchAdventures(path);
-  if (json && json.data && json.data.adventureList && json.data.adventureList.items) {
+  if (!$err && json && json.data && json.data.adventureList && json.data.adventureList.items) {
+    const $root = document.createElement('span');
     const $ul = document.createElement('ul');
     var adventures = json.data.adventureList.items;
+    const activities = {};
     adventures.forEach((adventure, index) => {
-      // List item
+      if(adventure.activity) {
+        activities[adventure.activity] = true;
+      }
       const $li = document.createElement('li');
-      $li.className = 'cmp-image-list__item';
-      $li.setAttribute('itemscope', '');
-      $li.setAttribute('itemid', 'urn:aemconnection:' + adventure['_path'] + '/jcr:content/data/master');
-      $li.setAttribute('itemtype', 'reference');
-      $li.setAttribute('itemfilter', 'cf');
 
-      // Article
-      const $article = document.createElement('article');
-      $article.className = 'cmp-image-list__item-content';
-      // Thumbnail
-      const $thumbnailDiv = document.createElement('div');
-      $thumbnailDiv.className = 'cmp-image-list__item-image';
-      const $thumbnail = document.createElement('img');
-      $thumbnail.src = 'https://' + hostname + adventure.primaryImage['_dynamicUrl'];
-      $thumbnail.alt = adventure.title;
-      $thumbnail.className = 'cmp-image';
-      $thumbnailDiv.appendChild($thumbnail);
-      $article.appendChild($thumbnailDiv);
-      // Title
-      const $title = document.createElement('span');
-      $title.className = 'cmp-image-list__item-title';
-      $title.setAttribute('itemprop', 'title');
-      $title.setAttribute('itemtype', 'text');
+      const $ac = document.createElement('wknd-small-card');
+      $ac.setAttribute('data-activity', adventure.activity);
+
+      const $title = document.createElement('h4');
+      $title.setAttribute('slot', 'title');
       $title.textContent = adventure.title;
-      $article.appendChild($title);
+      $ac.appendChild($title);
 
-      $li.appendChild($article);
+      // hack for image width
+      let imageSrc = 'https://' + hostname + adventure.primaryImage['_dynamicUrl'];
+      imageSrc = imageSrc.replace("width=200", "width=400");
+
+      const $img = document.createElement('img');
+      $img.setAttribute('src', imageSrc);
+      $img.setAttribute('alt', adventure.title);
+      $img.setAttribute('slot', 'image');
+      $ac.appendChild($img);
+
+      const $description = document.createElement('div');
+      $description.textContent = adventure.activity;
+      $ac.appendChild($description);
+
+      $li.appendChild($ac);
       $ul.appendChild($li);
     });
-    $block.replaceChildren($ul);
+
+    // And create the activity selector
+    const $selector = document.createElement('activities-selector');
+    $selector.setAttribute('title', 'Select an activity');
+    const $menu = document.createElement('menu');
+    $selector.appendChild($menu);
+    for(var a of Object.keys(activities)) {
+      const $li = document.createElement('li');
+      $li.textContent = a;
+      $menu.appendChild($li);
+    }
+
+    $root.appendChild($selector);
+    $root.appendChild($ul);
+    $block.replaceChildren($root);
+  } else if($err) {
+    $block.replaceChildren($err);
   } else {
     $block.innerHTML = '';
   }
