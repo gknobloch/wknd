@@ -39,6 +39,9 @@ class ActivitiesSelector extends HTMLElement {
   connectedCallback() {
     const shadowRoot = this.attachShadow({mode:"open"});
     shadowRoot.appendChild(this.#template.content.cloneNode(true));
+
+    // ::slotted styles only select top-level elements, so we
+    // need to copy the li elements to be able to style them
     const $title = document.createElement('p');
     $title.textContent = this.getAttribute('title') + ":";
     shadowRoot.appendChild($title);
