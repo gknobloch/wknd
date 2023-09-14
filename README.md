@@ -11,7 +11,7 @@ https://web-components--wknd--gknobloch.hlx.page/experiments/adventures-headless
 mixed with (cached) live AEM data read at
 https://dev.wknd.site/graphql/execute.json/wknd-shared/adventures-all-franklin
 
-That page is rendered by the [adventures-list](./blocks/adventures-list/) Franklin block.
+That page is rendered by the [adventures-list](./blocks/adventures-list/) Franklin block which uses [two example Web Components](./blocks/web-components/) that interact using Custom Events.
 
 ## Local development
 
